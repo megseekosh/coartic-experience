@@ -17,7 +17,7 @@ coartic_df1$Word <- plyr::mapvalues(coartic_df1$Word, from = c("rvnIN"), to = c(
 # make sure that participant_ID is a factor!
 coartic_df1$Participant_ID <- as.factor(coartic_df1$Participant_ID)
 
-# ------- calculate range of target consonant and vowel durations, to appease reviewer ------
+# ------- calculate range of target consonant and vowel durations ------
   
 con_dur <- coartic_df1 %>%
   filter(Phone=='k' | Phone=='t' | Phone=='s' | Phone=='w' | Phone=='s' | Phone=='S' | Phone=='tS' | Phone=='r') %>%
@@ -137,14 +137,14 @@ df.final$manner <- plyr::mapvalues(df.final$Word, from = c("kaemIg", "kaend6l", 
                                                            "wetIN",     "wImEl",     "wIndo" ), 
                                    to = c("stop", "stop", "stop", "stop", "stop", "stop", 
                                           "stop", "stop", 
-                                          "glide", "glide", "glide",
-                                    "glide", "glide", "glide", "glide", "glide", 
-                                    "glide", "glide", 
+                                          "approximant", "approximant", "approximant",
+                                    "approximant", "approximant", "approximant", "approximant", "approximant", 
+                                    "approximant", "approximant", 
                                     "fricative", "fricative", "fricative",
                                     "fricative", "fricative", "fricative", "fricative", "fricative", 
                                     "fricative", "fricative", "fricative", "fricative", 
-                                   "stop", "stop",  "stop",  "stop",  "affricate",  "affricate", "stop", "stop", "glide", "glide", "glide", "glide",
-                                    "glide", "glide", "glide", "glide"))
+                                   "stop", "stop",  "stop",  "stop",  "affricate",  "affricate", "stop", "stop", "approximant", "approximant", "approximant", "approximant",
+                                    "approximant", "approximant", "approximant", "approximant"))
 
 # write out the data here to use in phonotactic frequency
 # in nonword analysis
@@ -170,8 +170,8 @@ df.final$LENA_Prop_Meaningful <- center_scale(df.final$LENA_Prop_Meaningful)
 df.final$LENA_Prop_Distant <- center_scale(df.final$LENA_Prop_Distant)
 df.final$LENA_Prop_Silence <- center_scale(df.final$LENA_Prop_Silence)
 df.final$sec_frequency <- center_scale(df.final$sec_frequency)
-df.final$LENA_AWC_Hourly <- center_scale(df.final$LENA_AWC_Hourly)
-df.final$LENA_CVC_Hourly <- center_scale(df.final$LENA_CVC_Hourly)
+df.final$LENA_AWC_Hourly_scaled <- center_scale(df.final$LENA_AWC_Hourly)
+df.final$LENA_CVC_Hourly_scaled <- center_scale(df.final$LENA_CVC_Hourly)
 df.final$Word <- as.factor(df.final$Word)
 df.final$Word_duration <- center_scale(df.final$Word_duration)*1000
 
@@ -249,7 +249,7 @@ anova(m3, fem) # doesn't improves
 # ------ FINAL WORD TYPE*VOCAB MODEL -----
 df.final$word_type <- relevel(df.final$word_type, ref = "nonword")
 
-summary(mword <- lme4::lmer(euc_dist ~ PPVT_GSV + # call lme4 so that stargazer works
+summary(mword <- lme4::lmer(euc_dist ~ PPVT_GSV_centered + # call lme4 so that stargazer works
                               Word_duration +
                               (1|Participant_ID) + 
                               (1|Word), 
@@ -275,7 +275,7 @@ stargazer(mword,
           covariate.labels = c("Intercept", 
                                "Receptive vocabulary score (PPVT-4)", 
                                "Word duration (ms)"),
-          out = "Google_Drive/non-word_rep/acoustic_analyses/visuals/word*vocab_model_summary.tex")
+          out = "/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/word*vocab_model_summary.tex")
 
 
 
@@ -354,24 +354,27 @@ anova(m7a, fem) # doesn't improve
 
 
 # start checking LENA measures
-summary(mCVC <- lmer(euc_dist ~  LENA_CVC_Hourly + Word_duration + EVT_GSV_centered+(1|Participant_ID) + (1|Word), data=LENA_df)) 
-summary(mAWC <- lmer(euc_dist ~  LENA_AWC_Hourly + Word_duration + EVT_GSV_centered+(1|Participant_ID) + (1|Word), data=LENA_df)) 
+summary(mCVC <- lmer(euc_dist ~  LENA_CVC_Hourly_scaled + Word_duration + EVT_GSV_centered+(1|Participant_ID) + (1|Word), data=LENA_df)) 
+summary(mAWC <- lmer(euc_dist ~  LENA_AWC_Hourly_scaled + Word_duration + EVT_GSV_centered+(1|Participant_ID) + (1|Word), data=LENA_df)) 
 
 anova(m7a, mCVC) #  improves (AIC = 14892)
 anova(m7a, mAWC) # doesn't improve
 
 # what about a model that includes both LENA measures?
-summary(mAWCCVC <- lmer(euc_dist ~ LENA_CVC_Hourly + LENA_AWC_Hourly + Word_duration + PPVT_GSV_centered+(1|Participant_ID) + (1|Word), data=LENA_df)) 
+summary(mAWCCVC <- lmer(euc_dist ~ LENA_CVC_Hourly_scaled + LENA_AWC_Hourly_scaled + Word_duration + PPVT_GSV_centered+(1|Participant_ID) + (1|Word), data=LENA_df)) 
 anova(mCVC, mAWCCVC) # doesn't improve
 
 # interaction not relevant
-summary(m12 <- lmer(euc_dist ~ PPVT_GSV_centered*LENA_CVC_Hourly + Word_duration + (1|Participant_ID) + (1|Word), data=LENA_df)) 
+summary(m12 <- lmer(euc_dist ~ PPVT_GSV_centered*LENA_CVC_Hourly_scaled + Word_duration + (1|Participant_ID) + (1|Word), data=LENA_df)) 
 anova(mCVC, m12) # doesn't improve 
+
+summary(m12b <- lmer(euc_dist ~ EVT_GSV_centered*LENA_CVC_Hourly_scaled + Word_duration + (1|Participant_ID) + (1|Word), data=LENA_df)) 
+anova(mCVC, m12b) # doesn't improve 
 
 # are child vocs and vocabulary size correlated?
 LENA_df_unq <- LENA_df %>% distinct(Participant_ID, .keep_all = T)
-cor.test(LENA_df_unq$LENA_CVC_Hourly, LENA_df_unq$PPVT_GSV_centered, method=c("pearson"))
-cor.test(LENA_df_unq$LENA_CVC_Hourly, LENA_df_unq$EVT_GSV_centered, method=c("pearson"))
+cor.test(LENA_df_unq$LENA_CVC_Hourly_scaled, LENA_df_unq$PPVT_GSV_centered, method=c("pearson"))
+cor.test(LENA_df_unq$LENA_CVC_Hourly_scaled, LENA_df_unq$EVT_GSV_centered, method=c("pearson"))
 ggplot(LENA_df_unq, aes(y = LENA_CVC_Hourly, x = EVT_GSV)) +
   geom_jitter() + 
   geom_smooth(method = "lm")
@@ -381,10 +384,10 @@ ggplot(LENA_df_unq, aes(y = LENA_CVC_Hourly, x = EVT_GSV)) +
 # effect of AWC on CVC
 awc.cvc <- LENA_df %>%
   distinct(Speaker, .keep_all = T) %>% 
-  lm(LENA_CVC_Hourly ~ LENA_AWC_Hourly + EVT_GSV_centered, data=.) 
+  lm(LENA_CVC_Hourly ~ LENA_AWC_Hourly_scaled + EVT_GSV_centered, data=.) 
 summary(awc.cvc)
 
-cvc.coartic <- lmer(euc_dist ~ LENA_AWC_Hourly + LENA_CVC_Hourly + EVT_GSV_centered + Word_duration + (1|Participant_ID) + (1|Word), data=LENA_df)
+cvc.coartic <- lmer(euc_dist ~ LENA_AWC_Hourly_scaled + LENA_CVC_Hourly_scaled + EVT_GSV_centered + Word_duration + (1|Participant_ID) + (1|Word), data=LENA_df)
 summary(cvc.coartic)
 
 # ----------- FINAL CVC model RESULTS ---------
@@ -393,7 +396,7 @@ summary(cvc.coartic)
 LENA_df$word_type <- relevel(LENA_df$word_type, ref = "nonword")
 
 summary(mCVCfinal <- lme4::lmer(euc_dist ~ # call lme4 so that stargazer works
-                                   LENA_CVC_Hourly + 
+                                  LENA_CVC_Hourly_scaled + 
                                    Word_duration +
                                    EVT_GSV_centered + 
                                    (1|Participant_ID) + 
@@ -419,7 +422,7 @@ stargazer(mCVCfinal,
                                "Hourly child vocalization count", 
                                "Word duration (ms)",
                                "Expressive vocabulary score (EVT-2)"),
-          out = "Google_Drive/non-word_rep/acoustic_analyses/visuals/CVC_model_summary.tex")
+          out = "/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/CVC_model_summary.tex")
 
 
 
@@ -435,10 +438,10 @@ summary(latec <- lmer(euc_dist ~ Word_duration + PPVT_GSV_centered*LateTalker + 
 anova(latea, latec) # doesn't improve 
 
 # for LENA analyses
-summary(latea <- lmer(euc_dist ~ Word_duration + LENA_CVC_Hourly + PPVT_GSV_centered + (1|Participant_ID) + (1|Word), data=LENA_df)) 
-summary(lateb <- lmer(euc_dist ~ Word_duration + LENA_CVC_Hourly + PPVT_GSV_centered + LateTalker + (1|Participant_ID) + (1|Word), data=LENA_df)) 
+summary(latea <- lmer(euc_dist ~ Word_duration + LENA_CVC_Hourly_scaled + PPVT_GSV_centered + (1|Participant_ID) + (1|Word), data=LENA_df)) 
+summary(lateb <- lmer(euc_dist ~ Word_duration + LENA_CVC_Hourly_scaled + PPVT_GSV_centered + LateTalker + (1|Participant_ID) + (1|Word), data=LENA_df)) 
 anova(latea, lateb) # doesn't improve 
-summary(latec <- lmer(euc_dist ~ Word_duration + LENA_CVC_Hourly*LateTalker + PPVT_GSV_centered + (1|Participant_ID) + (1|Word), data=LENA_df)) 
+summary(latec <- lmer(euc_dist ~ Word_duration + LENA_CVC_Hourly_scaled*LateTalker + PPVT_GSV_centered + (1|Participant_ID) + (1|Word), data=LENA_df)) 
 anova(latea, latec) # doesn't improve 
 
 
@@ -446,7 +449,7 @@ anova(latea, latec) # doesn't improve
 # late talkers
 # models w/o late talkers 
 nolate <- LENA_df[which(LENA_df$LateTalker=='0'), ]
-summary(late2 <- lmer(euc_dist ~ Word_duration + LENA_CVC_Hourly + PPVT_GSV_centered +(1|Participant_ID) + (1|Word), data=nolate)) 
+summary(late2 <- lmer(euc_dist ~ Word_duration + LENA_CVC_Hourly_scaled + PPVT_GSV_centered +(1|Participant_ID) + (1|Word), data=nolate)) 
 # effects are present
 
 
@@ -458,8 +461,8 @@ df.final$word_type <- factor(df.final$word_type, levels = c("realword", "nonword
 # ----- median split ------
 # make some subgroups
 # by vocab
-# median ppvt GSV score = 139.0
-LENA_df$vocab_group <- ifelse(LENA_df$PPVT_GSV < 139, "Smaller vocabulary group", 
+# median evt GSV score for LENA dataset = 134
+LENA_df$vocab_group <- ifelse(LENA_df$EVT_GSV < 134, "Smaller vocabulary group", 
                                                        "Larger vocabulary group")
 LENA_df$vocab_group <- as.factor(LENA_df$vocab_group)
 
@@ -497,9 +500,9 @@ ggplot(df.final, aes(y = euc_dist, x = PPVT_GSV, color=word_type, shape=word_typ
 
 
 
-
 jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/PPVT*word_type.jpeg", height = 500, width = 500)
-ggplot(df.final, aes(y = euc_dist, x = PPVT_GSV, color = word_type, shape=word_type)) + 
+df.final %>%
+ggplot(., aes(y = euc_dist, x = PPVT_GSV, color = word_type, shape=word_type)) + 
   xlab("Receptive vocabulary score (PPVT-4)") + ylab("Mel spectral distance between phones") +
   geom_smooth(method = "lm", se=TRUE) + 
   geom_jitter(size=1, alpha=.5) + 
@@ -507,7 +510,7 @@ ggplot(df.final, aes(y = euc_dist, x = PPVT_GSV, color = word_type, shape=word_t
   guides(fill=guide_legend(title="Word Type")) +
   #scale_color_manual(values=c("forestgreen", "dodgerblue3"))
   scale_color_manual(values=c("darkorchid3", "darkorange2")) +
-  labs(title= "C-V coarticulation by \n receptive vocabulary size") + 
+  #labs(title= "C-V coarticulation by \n receptive vocabulary size") + 
   theme(axis.title=element_text(size=16)) + 
   theme(plot.title = element_text(size = 25, face = "bold")) +
   theme(axis.text.x = element_text(face="bold", size=15),
@@ -515,13 +518,13 @@ ggplot(df.final, aes(y = euc_dist, x = PPVT_GSV, color = word_type, shape=word_t
 dev.off()
 
 # try to plot each child's mean, instead of individual trials
-jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/PPVT_word_type_means.jpeg", height = 500, width = 500)
-df.final %>%
+jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/PPVT_word_type_means.jpeg", height = 500, width = 450)
+tocheck <- df.final %>%
   group_by(word_type, Participant_ID) %>%
-  mutate(coartic_mean = mean(euc_dist)) %>%
-  distinct_at(., vars(word_type,Participant_ID), .keep_all = T) %>%
-ggplot(., aes(y = coartic_mean, x = PPVT_GSV, color = word_type, shape=word_type)) + 
-  xlab("Receptive vocabulary score (PPVT-4)") + ylab("Mel spectral distance between phones") +
+  mutate(coartic_med = median(euc_dist)) %>%
+  distinct_at(., vars(word_type,Participant_ID), .keep_all = T) #%>%
+ggplot(., aes(y = coartic_med, x = PPVT_GSV, color = word_type, shape=word_type)) + 
+  xlab("Receptive vocabulary score (PPVT-4)") + ylab("Median Mel spectral \n distance between phones") +
   geom_smooth(method = "lm", se=TRUE) + 
   geom_jitter(size=4, alpha=.75) + 
   #coord_cartesian(ylim=c(4,13)) + # to zoom in, not remove pts
@@ -554,7 +557,7 @@ ggplot(LENA_df, aes(y = euc_dist, x = LENA_CVC_Hourly, color=word_type, shape=wo
 dev.off()
 
 # three way interaction
-jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/word_type-CVC-EVT.jpeg", height = 500, width = 500)
+jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/word_type-CVC-EVT.jpeg", height = 500, width = 600)
 ggplot(LENA_df, aes(y = euc_dist, x = LENA_CVC_Hourly, color=word_type, shape=word_type)) + 
   xlab("Number of child vocalizations \n per hour (LENA)") + ylab("Mel spectral distance between phones") +
   geom_smooth(method = "lm", se=TRUE)+ 
@@ -568,7 +571,7 @@ ggplot(LENA_df, aes(y = euc_dist, x = LENA_CVC_Hourly, color=word_type, shape=wo
   theme(plot.title = element_text(size = 22, face = "bold")) +
   theme(axis.text.x = element_text(face="bold", size=15),
         axis.text.y = element_text(face ='bold', size=15)) +
-  theme(strip.text.x = element_text(size = 12),
+  theme(strip.text.x = element_text(size = 15),
         legend.text = element_text(size=15),
         legend.title = element_text(size=15))
 dev.off()
@@ -593,14 +596,14 @@ dev.off()
 
 
 cor.test(LENA_df_unique$LENA_AWC_Hourly, LENA_df_unique$LENA_CVC_Hourly, method="pearson") 
-jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/coartic/CVC*AWC_plain", height = 500, width = 500)
+jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/CVC-AWC_plain.jpeg", height = 500, width = 350)
 ggplot(LENA_df_unique, aes(y = LENA_CVC_Hourly, x = LENA_AWC_Hourly)) + 
   xlab("Number of adult words \n per hour (LENA)") + ylab("Number of child vocalizations \n per hour (LENA)") +
   geom_smooth(method = "lm", se=TRUE) + 
   geom_jitter(size=2, alpha=.5) +
   scale_x_continuous(breaks=seq(0,3000,500)) + 
   scale_y_continuous(breaks=seq(0,500,100)) +
-  labs(title= "Child vocalization count by \n adult word count") + 
+ # labs(title= "Child vocalization count by \n adult word count") + 
   theme(axis.title=element_text(size=16)) + 
   theme(plot.title = element_text(size = 25, face = "bold")) +
   theme(axis.text.x = element_text(face="bold", size=15),
@@ -623,14 +626,14 @@ df.final$Manner <- plyr::mapvalues(df.final$Word, from = c("kaemIg", "kaend6l", 
                                                          "sVni", "taIblor", "taIg6r", "tost6r", "tozEl", "tSIkIn",
                                                          "tSImIg", "tugraIf", "tuTbrVS", "wakraed", "waprot", "waS6r",
                                                          "wat6r", "wemag", "wetIN", "wImEl", "wIndo"), 
-                                  to = c("Stop", "Stop", "Stop","Stop","Stop","Stop","Stop","Stop","Glide",
-                                         "Glide","Glide","Glide","Glide","Glide","Glide","Glide","Glide","Glide",
+                                  to = c("Stop", "Stop", "Stop","Stop","Stop","Stop","Stop","Stop","Approximant",
+                                         "Approximant","Approximant","Approximant","Approximant","Approximant","Approximant","Approximant","Approximant","Approximant",
                                          "Fricative","Fricative","Fricative","Fricative","Fricative","Fricative",
                                          "Fricative","Fricative","Fricative","Fricative","Fricative","Fricative",
-                                         "Stop","Stop","Stop","Stop","Affricate","Affricate","Stop","Stop","Glide","Glide",
-                                         "Glide","Glide","Glide","Glide","Glide","Glide"))
+                                         "Stop","Stop","Stop","Stop","Affricate","Affricate","Stop","Stop","Approximant","Approximant",
+                                         "Approximant","Approximant","Approximant","Approximant","Approximant","Approximant"))
 # put in the right order for plotting
-df.final$Manner <- factor(df.final$Manner, levels = c("Glide", "Fricative", "Affricate", "Stop"))
+df.final$Manner <- factor(df.final$Manner, levels = c("Approximant", "Fricative", "Affricate", "Stop"))
 
 # make LENA df again
 LENA_df <- na.omit(df.final)
@@ -639,7 +642,7 @@ LENA_df <- subset(df.final, LENA_Hours>3) # drop the one kid with the 2 hour rec
 # remove affricates
 LENA_df_noaff <- LENA_df %>% filter(Manner!='Affricate')
 
-jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/CVC_manner_noaff.jpeg", height = 500, width = 500)
+jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/CVC_manner_noaff.jpeg", height = 500, width = 750)
 ggplot(LENA_df_noaff, aes(y = euc_dist, x = LENA_CVC_Hourly, color=word_type, shape=word_type)) + 
   xlab("Number of child vocalizations \n per hour (LENA)") + ylab("Mel spectral distance between phones") +
   geom_smooth(method = "lm", se=TRUE) + 
@@ -651,9 +654,9 @@ ggplot(LENA_df_noaff, aes(y = euc_dist, x = LENA_CVC_Hourly, color=word_type, sh
  # labs(title= "C-V coarticulation by number of child \n vocalizations and phoneme manner") + 
   theme(axis.title=element_text(size=16)) + 
   theme(plot.title = element_text(size = 25, face = "bold")) +
-  theme(axis.text.x = element_text(face="bold", size=12),
+  theme(axis.text.x = element_text(face="bold", size=15),
         axis.text.y = element_text(face ='bold', size=15)) +
-  theme(strip.text.x = element_text(size = 12),
+  theme(strip.text.x = element_text(size = 15),
         legend.title = element_text(size=15),
         legend.text = element_text(size=15))
 dev.off()
@@ -662,7 +665,7 @@ dev.off()
 df.final_noaff <- df.final %>% filter(manner!='affricate')
 
 # use whole dataset for this one, not just LENA kids
-jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/PPVT_manner_noaff.jpeg", height = 500, width = 500)
+jpeg("/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/visuals/PPVT_manner_noaff.jpeg", height = 500, width = 750)
 ggplot(df.final_noaff, aes(y = euc_dist, x = PPVT_GSV, color=word_type, shape=word_type)) + 
   xlab("Receptive vocabulary score (PPVT-4)") + ylab("Mel spectral distance between phones") +
   geom_smooth(method = "lm", se=TRUE) + 
@@ -675,9 +678,9 @@ ggplot(df.final_noaff, aes(y = euc_dist, x = PPVT_GSV, color=word_type, shape=wo
   #labs(title= "C-V coarticulation by receptive \n vocabulary size and phoneme manner") + 
   theme(axis.title=element_text(size=16)) + 
   theme(plot.title = element_text(size = 20, face = "bold")) +
-  theme(axis.text.x = element_text(face="bold", size=12),
+  theme(axis.text.x = element_text(face="bold", size=15),
         axis.text.y = element_text(face ='bold', size=15)) +
-  theme(strip.text.x = element_text(size = 12),
+  theme(strip.text.x = element_text(size = 15),
         legend.text = element_text(size=15),
         legend.title = element_text(size=15))
 dev.off()
