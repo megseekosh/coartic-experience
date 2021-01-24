@@ -2,8 +2,8 @@
 
 rm(list=ls())
 
-data <- read.csv ('Google_Drive/non-word_rep/acoustic_analyses/data/coartic/final_mfcc_scores.csv') 
-vocab_data <- read.csv ('Google_Drive/non-word_rep/acoustic_analyses/data/vocab_scores.csv') 
+data <- read.csv ('/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/data/coartic/final_mfcc_scores.csv') 
+vocab_data <- read.csv ('/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/data/vocab_scores.csv') 
 
 
 # remove everything after the L to merge dfs
