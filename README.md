@@ -34,4 +34,4 @@ Cychosz, M., Munson, B., & Edwards, J. (2021). Practice and experience predict c
 
 Note: one child's real words were included in `rwr_mfcc_complete.csv` twice during generation of paper results. No conclusions in the paper changed once this was addressed.  
 
-Oct 2026: cleaned up typos in code, removed redundant and un-needed columns in metadata. 
+Oct 2026: cleaned up typos in code, removed redundant and un-needed columns in metadata, converted filepaths to relative. 
