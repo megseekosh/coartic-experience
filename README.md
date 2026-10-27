@@ -28,10 +28,6 @@ Cychosz, M., Munson, B., & Edwards, J. (2021). Practice and experience predict c
 
 `nwr_mfcc_complete.csv` - acoustic measures (spectral vectors, word and phone duration) for each C and V in the nonwords
 
-`repetition_scores_mfcc.csv` - dataframe with acoustic measures and repetition scores from word repetition task
-
-`final_mfcc_scores.csv` - dataframe with 100% correct repetitions and acoustic measures
-
 `vocab_scores.csv` - dataframe with vocabulary scores, LENA measures, and (limited) participant demographic information
 
 `final_mfccs_w_vocab.csv` - dataframe of 100% correct repetitons with acoustic measures, vocabulary scores, LENA measures, and demographic information
