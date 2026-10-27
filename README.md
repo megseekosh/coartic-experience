@@ -36,3 +36,4 @@ Cychosz, M., Munson, B., & Edwards, J. (2021). Practice and experience predict c
 
 `final_mfccs_w_vocab.csv` - dataframe of 100% correct repetitons with acoustic measures, vocabulary scores, LENA measures, and demographic information
 
+Note: one child's real words were included in `rwr_mfcc_complete.csv` twice during generation of paper results. No results in the paper changed once this was addressed.  
