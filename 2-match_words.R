@@ -2,7 +2,7 @@
 # Meg Cychosz, 2018
 
 
-scores <- read.csv('Google_Drive/non-word_rep/acoustic_analyses/data/coartic/repetition_scores_mfcc.csv')
+scores <- read.csv('repetition_scores_mfcc.csv', stringsAsFactors = TRUE)
 
 
 # create total score 
@@ -147,7 +147,7 @@ vars <- c(
 final <- correct_scores[ , !(names(correct_scores) %in% vars)]
 
 
-write.csv(final, file = "Google_Drive/non-word_rep/acoustic_analyses/data/coartic/final_mfcc_scores.csv")
+write.csv(final, file = "final_mfcc_scores.csv")
 
 
 

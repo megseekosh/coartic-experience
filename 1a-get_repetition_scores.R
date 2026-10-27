@@ -2,12 +2,12 @@
 
 rm(list=ls())
 
-rwr <- read.csv ('Google_Drive/non-word_rep/acoustic_analyses/data/coartic/rwr_mfcc_complete.csv') # rwr
-nwr <- read.csv ('Google_Drive/non-word_rep/acoustic_analyses/data/coartic/nwr_mfcc_complete.csv') # nwr
+rwr <- read.csv('rwr_mfcc_complete.csv', stringsAsFactors = TRUE) # rwr
+nwr <- read.csv('nwr_mfcc_complete.csv', stringsAsFactors = TRUE) # nwr
 
 # clean up some messes
 nwr$Phone <- plyr::mapvalues(nwr$Phone, from = c("kVfim", "al"), to = c("k", "aI"))
-rwr$Word <- plyr::mapvalues(rwr$Word, from = c("rVnIn"), to = c("ruvIN"))
+rwr$Word <- plyr::mapvalues(rwr$Word, from = c("rVnIn"), to = c("rvnIN"))
 rwr$Phone <- plyr::mapvalues(rwr$Phone, from = c("v"), to = c("V"))
 nwr$Speaker <- plyr::mapvalues(nwr$Speaker, from = c("026L39MS3.wav", "620L41FS3.wav", "625L43FS3.wav", "628L49FS4.wav"), to = c("026L39MS3.WAV", "620L41FS3.WAV", "625L43FS3.WAV", "628L49FS4.WAV"))
 
@@ -93,9 +93,6 @@ rw <- subset(newdf, word_type=='realword')
 # working directory, if so close script and rerun
 get_prosody <- function(data_column) {
   out <- data.frame()
-  setwd(
-    'Google_Drive/non-word_rep/acoustic_analyses/data/coartic/'
-  )
   for (score in data_column) {
     print(score)
     mini_df <- unlist(strsplit(score, ";"))

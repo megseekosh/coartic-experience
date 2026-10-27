@@ -2,8 +2,8 @@
 # have to use second script as weird thing happening with directory in part I
 
 # combine separated prosody dfs (run separately bc the script was taking forever)
-sep_scores <- read.csv('Google_Drive/non-word_rep/acoustic_analyses/data/coartic/sep_prosody_scores_mfcc.csv')
-#rw_sep_scores <- read.csv('Google_Drive/non-word_rep/acoustic_analyses/data/sep_prosody_scores_mfcc_rw.csv')
+sep_scores <- read.csv('sep_prosody_scores_mfcc.csv', stringsAsFactors = TRUE)
+#rw_sep_scores <- read.csv('sep_prosody_scores_mfcc_rw.csv')
 
 #sep_scores <- rbind(nw_sep_scores, rw_sep_scores)
 
@@ -30,10 +30,10 @@ final_data$prosody_score <-
 myvar <- names(final_data) %in% c("number")
 output <- final_data[!myvar]
 
-write.csv(output, file = 'Google_Drive/non-word_rep/acoustic_analyses/data/coartic/repetition_scores_mfcc.csv')
+write.csv(output, file = 'repetition_scores_mfcc.csv')
 
 # check the new file over
-rep_scores <- read.csv('Google_Drive/non-word_rep/acoustic_analyses/data/coartic/repetition_scores_mfcc.csv')
+rep_scores <- read.csv('repetition_scores_mfcc.csv', stringsAsFactors = TRUE)
 
 
 

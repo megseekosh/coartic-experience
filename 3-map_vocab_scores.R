@@ -2,8 +2,8 @@
 
 rm(list=ls())
 
-data <- read.csv ('/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/data/coartic/final_mfcc_scores.csv') 
-vocab_data <- read.csv ('/Users/megcychosz/Google Drive/non-word_rep/acoustic_analyses/data/vocab_scores.csv') 
+data <- read.csv('final_mfcc_scores.csv', stringsAsFactors = TRUE) 
+vocab_data <- read.csv('vocab_scores.csv', stringsAsFactors = TRUE) 
 
 
 # remove everything after the L to merge dfs
@@ -16,6 +16,7 @@ final <- merge(data, vocab_data, by = c("Participant_ID"))
 # only select relevant variables 
  vars <- c(
    "Participant_ID",
+   "Speaker",
    "WordID",
     "Phone",
     "Word",
@@ -46,5 +47,5 @@ final <- merge(data, vocab_data, by = c("Participant_ID"))
  newdata <- final[vars]
 
 
-write.csv(final, file = "Google_Drive/non-word_rep/acoustic_analyses/data/coartic/final_mfccs_w_vocab.csv")
+write.csv(newdata, file = "final_mfccs_w_vocab.csv")
 
