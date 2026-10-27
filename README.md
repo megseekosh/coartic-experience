@@ -2,7 +2,7 @@
 
 Repo contains scripts and data necessary to replicate analyses in:
 
-Cychosz, M., Munson, B., & Edwards, J. (accepted). Practice and experience predict coarticulation in child speech. *Language Learning and Development*. (https://psyarxiv.com/vwhtk/)
+Cychosz, M., Munson, B., & Edwards, J. (2021). Practice and experience predict coarticulation in child speech. *Language Learning and Development, 17*(4), 366–396. (https://psyarxiv.com/vwhtk/)
 
 ## Acoustic measures
 
@@ -19,12 +19,6 @@ Cychosz, M., Munson, B., & Edwards, J. (accepted). Practice and experience predi
 **3-map_vocab_scores.R** - reads in `final_mfcc_scores.csv` and `vocab_scores.csv` and merges the dataframes; generates `final_mfccs_w_vocab.csv`
 
 **4-model_coartic.R** - reads in `final_mfccs_w_vocab.csv` to process spectral vectors data and calculate Euclidean distance; modeling and figures for paper
-
-## Output
-
-**coartic_experience_accepted.pdf** - compiled paper
-
-**coartic_experience_accepted.tex** - tex source of coartic_experience_accepted.pdf
 
 ## Data
 
